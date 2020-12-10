@@ -1,11 +1,13 @@
-const axios = require('axios')
+
 'use strict';
+const axios = require('axios');
+const cors = require('cors');
 const express = require('express');
 const path = require('path');
 const serverless = require('serverless-http');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors');
+
 
 
 const api = axios.create({
@@ -23,14 +25,31 @@ router.post('/test', async (request, response) => {
   console.log("Teste")
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"   xmlns:bees="http://www.beesmart.tv/">    <soapenv:Header/>  <httpProtocol>      <customHeaders>        <add name="Access-Control-Allow-Origin" value="*" />      </customHeaders>    </httpProtocol>    <soapenv:Body>    <bees:getFilteredProfilesV4>       <profileFilter >      <regionUid >BALNEARIO_CAMBORIU</regionUid >    </profileFilter >    </bees:getFilteredProfilesV4> </soapenv:Body ></soapenv:Envelope >`;
 
+
   try {
     const { data } = await api.post('', xml);
-    console.log(data)
-    return response.json(data);
+
+
+    const parser = require("fast-xml-parser");
+
+    const jsonData = parser.parse(
+      data,
+      {
+        attrNodeName: "#attr",
+        textNodeName: "#text",
+        attributeNamePrefix: "",
+        arrayMode: "false",
+        ignoreAttributes: false,
+        parseAttributeValue: true,
+      },
+      true
+    );
+
+    return response.json(jsonData);
   } catch (error) {
     console.log(error)
   }
-}); 
+});
 
 router.get('/another', (req, res) => res.json({ route: req.originalUrl }));
 router.post('/', (req, res) => res.json({ postBody: req.body }));
