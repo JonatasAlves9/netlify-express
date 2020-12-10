@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 
 
 const api = axios.create({
-  baseURL: 'https://multtvadmin.multtv.tv.br/OB/user/endpoint?wsdl',
+  baseURL: 'https://multtvadmin.multtv.tv.br/OB',
 });
 
 const router = express.Router();
@@ -25,10 +25,45 @@ router.post('/test', async (request, response) => {
   console.log("Teste")
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"   xmlns:bees="http://www.beesmart.tv/">    <soapenv:Header/>  <httpProtocol>      <customHeaders>        <add name="Access-Control-Allow-Origin" value="*" />      </customHeaders>    </httpProtocol>    <soapenv:Body>    <bees:getFilteredProfilesV4>       <profileFilter >      <regionUid >BALNEARIO_CAMBORIU</regionUid >    </profileFilter >    </bees:getFilteredProfilesV4> </soapenv:Body ></soapenv:Envelope >`;
 
+  try {
+    const { data } = await api.post('/user/endpoint?wsdl', xml);
+
+    const parser = require("fast-xml-parser");
+
+    const jsonData = parser.parse(
+      data,
+      {
+        attrNodeName: "#attr",
+        textNodeName: "#text",
+        attributeNamePrefix: "",
+        arrayMode: "false",
+        ignoreAttributes: false,
+        parseAttributeValue: true,
+      },
+      true
+    );
+
+    return response.json(jsonData);
+  } catch (error) {
+    console.log(error)
+  }
+});
+
+router.post('/info-canais', async (request, response) => {
+  console.log("Teste")
+  const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bees="http://www.beesmart.tv/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <bees:getFilteredLiveChannels>
+     <liveChannelFilter   >
+        <regionUid>BALNEARIO_CAMBORIU</regionUid>
+     </liveChannelFilter   >
+      </bees:getFilteredLiveChannels>
+  </soapenv:Body>
+</soapenv:Envelope>`;
 
   try {
-    const { data } = await api.post('', xml);
-
+    const { data } = await api.post('/live/endpoint?wsdl', xml);
 
     const parser = require("fast-xml-parser");
 
