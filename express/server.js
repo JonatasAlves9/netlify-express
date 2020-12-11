@@ -21,6 +21,44 @@ router.get('/', (req, res) => {
   res.end();
 });
 
+router.get('/stream', async (request, response) => {
+  const { idStream } = request.body;
+
+  const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bees="http://www.beesmart.tv/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <bees:getContentStreamV4>
+        <contentStreamUid>`+idStream+`</contentStreamUid>
+      </bees:getContentStreamV4>
+  </soapenv:Body>
+</soapenv:Envelope>`;
+
+  try {
+    const { data } = await api.post('/content/endpoint?wsdl', xml);
+
+    const parser = require("fast-xml-parser");
+
+    const jsonData = parser.parse(
+      data,
+      {
+        attrNodeName: "#attr",
+        textNodeName: "#text",
+        attributeNamePrefix: "",
+        arrayMode: "false",
+        ignoreAttributes: false,
+        parseAttributeValue: true,
+      },
+      true
+    );
+
+    
+
+    return response.json(jsonData);
+  } catch (error) {
+    console.log(error)
+  }
+});
+
 router.get('/test', async (request, response) => {
   console.log("Teste")
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"   xmlns:bees="http://www.beesmart.tv/">    <soapenv:Header/>  <httpProtocol>      <customHeaders>        <add name="Access-Control-Allow-Origin" value="*" />      </customHeaders>    </httpProtocol>    <soapenv:Body>    <bees:getFilteredProfilesV4>       <profileFilter >      <regionUid >BALNEARIO_CAMBORIU</regionUid >    </profileFilter >    </bees:getFilteredProfilesV4> </soapenv:Body ></soapenv:Envelope >`;
