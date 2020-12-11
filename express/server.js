@@ -92,16 +92,17 @@ router.get('/info-canais', async (request, response) => {
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bees="http://www.beesmart.tv/">
   <soapenv:Header/>
   <soapenv:Body>
-    <bees:getFilteredLiveChannels>
-     <liveChannelFilter   >
-        <regionUid>BALNEARIO_CAMBORIU</regionUid>
-     </liveChannelFilter   >
-      </bees:getFilteredLiveChannels>
+     <bees:getFilteredContentStreamV4>
+        <contentStreamFilter>
+           <contentProviderInstanceUid>GENERIC_PROVIDER_7c5bc3bb4cc</contentProviderInstanceUid>
+        
+        </contentStreamFilter>
+     </bees:getFilteredContentStreamV4>
   </soapenv:Body>
 </soapenv:Envelope>`;
 
   try {
-    const { data } = await api.post('/live/endpoint?wsdl', xml);
+    const { data } = await api.post('/content/endpoint?wsdl', xml);
 
     const parser = require("fast-xml-parser");
 
