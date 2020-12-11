@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
   res.end();
 });
 
-router.post('/test', async (request, response) => {
+router.get('/test', async (request, response) => {
   console.log("Teste")
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"   xmlns:bees="http://www.beesmart.tv/">    <soapenv:Header/>  <httpProtocol>      <customHeaders>        <add name="Access-Control-Allow-Origin" value="*" />      </customHeaders>    </httpProtocol>    <soapenv:Body>    <bees:getFilteredProfilesV4>       <profileFilter >      <regionUid >BALNEARIO_CAMBORIU</regionUid >    </profileFilter >    </bees:getFilteredProfilesV4> </soapenv:Body ></soapenv:Envelope >`;
 
@@ -49,7 +49,7 @@ router.post('/test', async (request, response) => {
   }
 });
 
-router.post('/info-canais', async (request, response) => {
+router.get('/info-canais', async (request, response) => {
   console.log("Teste")
   const xml = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:bees="http://www.beesmart.tv/">
   <soapenv:Header/>
@@ -79,6 +79,7 @@ router.post('/info-canais', async (request, response) => {
       },
       true
     );
+
 
     return response.json(jsonData);
   } catch (error) {
